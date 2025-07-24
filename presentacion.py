@@ -11,7 +11,7 @@ st.title('CARTAGO')
 # Cargar un conjunto de datos de ejemplo (Iris)
 repro = pd.read_csv('CSV_Reproductivo.csv')
 
-repro = pd.read_csv("C:/Users/aacor/PycharmProjects/ASCII_Project/CSV_Reproductivo.csv")
+repro = pd.read_csv("CSV_Reproductivo.csv")
 repro['Par'] = pd.to_datetime(repro['Par'], format='%d/%m/%Y', errors='coerce')
 repro['an_Par'] = repro['Par'].dt.year.astype('Int64')
 
