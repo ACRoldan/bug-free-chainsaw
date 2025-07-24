@@ -13,12 +13,9 @@ st.title('CARTAGO')
 try:
     repro = pd.read_csv('CSV_Reproductivo.csv')
 except FileNotFoundError:
-    st.error("❌ El archivo 'CSV_Reproductivo.csv' no fue encontrado. Asegúrate de subirlo a tu repositorio en Streamlit Cloud.")
+    st.error("El archivo 'CSV_Reproductivo.csv' no fue encontrado. Asegúrate de subirlo a tu repositorio en Streamlit Cloud.")
     st.stop()
 
-# Procesar fechas
-repro['Par'] = pd.to_datetime(repro['Par'], format='%d/%m/%Y', errors='coerce')
-repro['an_Par'] = repro['Par'].dt.year.astype('Int64')
 
 # Mostrar encabezado y descripción
 st.subheader('ANALISIS REPRODUCTIVO ANUAL')
@@ -50,6 +47,8 @@ def estadisticas_por_ano(df, grupo_col, valor_col):
         q3=lambda x: np.percentile(x.dropna(), 75),
         max='max'
     ).reset_index()
+
+repro['an_Par'] = pd.to_numeric(repro['an_Par'], errors='coerce').astype('Int64')
 
 grupoAno = estadisticas_por_ano(repro, 'an_Par', variable)
 st.write(grupoAno)
