@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 sns.set_style("whitegrid")
 
@@ -23,7 +24,7 @@ repro['an_Par'] = repro['Par'].dt.year.astype('Int64')
 st.subheader('ANALISIS REPRODUCTIVO ANUAL')
 
 # Filtrar columnas
-columnas_excluir = ['Finca', 'Vaca', 'Lact', 'E_par']
+columnas_excluir = ['Finca', 'Vaca', 'Lact', 'E_par', 'Unnamed: 0']
 columnas_numericas = repro.select_dtypes(include='number').columns.tolist()
 variables_filtradas = [col for col in columnas_numericas if col not in columnas_excluir]
 
@@ -37,8 +38,26 @@ variable = st.selectbox("Seleccione la variable a graficar", variables_filtradas
 
 # Descripción estadística de la variable por año
 st.subheader(f'Descripción estadística de la variable: {variable}')
-grupoAno = repro.groupby('an_Par')[variable].describe()
+
+def estadisticas_por_ano(df, grupo_col, valor_col):
+    return df.groupby(grupo_col)[valor_col].agg(
+        count='count',
+        mean='mean',
+        std='std',
+        min='min',
+        q1=lambda x: np.percentile(x.dropna(), 25),
+        median='median',
+        q3=lambda x: np.percentile(x.dropna(), 75),
+        max='max'
+    ).reset_index()
+
+grupoAno = estadisticas_por_ano(repro, 'an_Par', variable)
 st.write(grupoAno)
+
+anios_disponibles = sorted(repro['an_Par'].dropna().unique())
+if not anios_disponibles:
+    st.warning("No hay años disponibles para graficar.")
+    st.stop()
 
 # Gráfico por año
 for anio in sorted(repro['an_Par'].dropna().unique()):
