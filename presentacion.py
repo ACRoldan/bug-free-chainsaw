@@ -21,7 +21,8 @@ except FileNotFoundError:
 st.subheader('ANALISIS REPRODUCTIVO ANUAL')
 
 # Filtrar columnas
-columnas_excluir = ['Finca', 'Vaca', 'Lact', 'E_par', 'Unnamed: 0']
+columnas_excluir = ['Finca', 'Vaca', 'Lact', 'E_par', 'T_par', 'Natimuertos', 'Concep', '#Celos',
+                    '#Serv', 'IEP_esp', 'Unnamed:']
 columnas_numericas = repro.select_dtypes(include='number').columns.tolist()
 variables_filtradas = [col for col in columnas_numericas if col not in columnas_excluir]
 
@@ -48,20 +49,20 @@ def estadisticas_por_ano(df, grupo_col, valor_col):
         max='max'
     ).reset_index()
 
-repro['an_Par'] = pd.to_numeric(repro['an_Par'], errors='coerce').astype('Int64')
+repro['an_par'] = pd.to_numeric(repro['an_par'], errors='coerce').astype('Int64')
 
-grupoAno = estadisticas_por_ano(repro, 'an_Par', variable)
+grupoAno = estadisticas_por_ano(repro, 'an_par', variable)
 st.write(grupoAno)
 
-anios_disponibles = sorted(repro['an_Par'].dropna().unique())
+anios_disponibles = sorted(repro['an_par'].dropna().unique())
 if not anios_disponibles:
     st.warning("No hay años disponibles para graficar.")
     st.stop()
 
 # Gráfico por año
-for anio in sorted(repro['an_Par'].dropna().unique()):
+for anio in sorted(repro['an_par'].dropna().unique()):
     st.subheader(f'Gráfico de {variable} - Año {anio}')
-    datos_anio = repro[repro['an_Par'] == anio]
+    datos_anio = repro[repro['an_par'] == anio]
     
     if datos_anio[variable].dropna().empty:
         st.write("No hay datos disponibles para este año.")
